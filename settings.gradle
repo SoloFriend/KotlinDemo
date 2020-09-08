@@ -1,0 +1,2 @@
+include ':app', ':gallery', ':viewpager'
+rootProject.name='KotlinDemo'
