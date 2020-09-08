@@ -6,7 +6,9 @@ import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.syt.gallery.vm.DATA_STATUS_NETWORK_ERROR
 import com.syt.gallery.vm.GalleryViewModel
 import kotlinx.android.synthetic.main.fragment_gallery.*
 
@@ -27,7 +29,7 @@ class GalleryFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         setHasOptionsMenu(true)
-        val galleryAdapter = GalleryAdapter()
+        val galleryAdapter = GalleryAdapter(galleryViewModel)
         rv_gallery.apply {
             adapter = galleryAdapter
             layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
@@ -39,18 +41,38 @@ class GalleryFragment : Fragment() {
         ).get(GalleryViewModel::class.java)
 
         galleryViewModel.photoListLive.observe(viewLifecycleOwner, Observer {
+            if (galleryViewModel.needToScrollTop) {
+                rv_gallery.scrollToPosition(0)
+                galleryViewModel.needToScrollTop = false
+            }
             galleryAdapter.submitList(it)
             if (srl_gallery.isRefreshing) {
                 srl_gallery.isRefreshing = false
             }
         })
 
+        galleryViewModel.dataStatusLive.observe(viewLifecycleOwner, {
+            galleryAdapter.footerViewStatus = it
+            galleryAdapter.notifyItemChanged(galleryAdapter.itemCount -1)
+            if (it == DATA_STATUS_NETWORK_ERROR) srl_gallery.isRefreshing = false
+        })
+
         srl_gallery.setOnRefreshListener {
-            galleryViewModel.fetchData()
+            galleryViewModel.resetQuery()
         }
 
-        srl_gallery.isRefreshing = true
-        galleryViewModel.photoListLive.value ?: galleryViewModel.fetchData()
+        rv_gallery.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (dy < 0) return
+                val layoutManager = rv_gallery.layoutManager as StaggeredGridLayoutManager
+                val intArray = IntArray(2)
+                layoutManager.findLastVisibleItemPositions(intArray)
+                if (intArray[0] == galleryAdapter.itemCount - 1) {
+                    galleryViewModel.fetchData()
+                }
+            }
+        })
 
     }
 
@@ -62,7 +84,7 @@ class GalleryFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.refresh -> {
-                galleryViewModel.fetchData()
+                galleryViewModel.resetQuery()
                 srl_gallery.isRefreshing = true
             }
         }

@@ -16,9 +16,17 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.syt.gallery.bean.Hit
+import com.syt.gallery.vm.DATA_STATUS_CAN_LOAD_MORE
+import com.syt.gallery.vm.DATA_STATUS_NETWORK_ERROR
+import com.syt.gallery.vm.DATA_STATUS_NO_MORE
+import com.syt.gallery.vm.GalleryViewModel
+import kotlinx.android.synthetic.main.footer_gallery.view.*
 import kotlinx.android.synthetic.main.item_gallery.view.*
 
-class GalleryAdapter : ListAdapter<Hit, GalleryViewHolder>(DIFF_CALLBACK) {
+class GalleryAdapter(val galleryViewModel: GalleryViewModel) :
+    ListAdapter<Hit, GalleryViewHolder>(DIFF_CALLBACK) {
+
+    var footerViewStatus = DATA_STATUS_CAN_LOAD_MORE
 
     companion object {
         const val NORMAL_VIEW_TYPE = 0  // 普通布局
@@ -56,15 +64,39 @@ class GalleryAdapter : ListAdapter<Hit, GalleryViewHolder>(DIFF_CALLBACK) {
                     .also {
                         (it.layoutParams as StaggeredGridLayoutManager.LayoutParams).isFullSpan =
                             true
+                        it.setOnClickListener { view ->
+                            galleryViewModel.fetchData()
+                            view.pb_loading.visibility = View.VISIBLE
+                            view.tv_loading.text = view.context.getString(R.string.tag_loading)
+                        }
                     }
             )
         }
-
         return holder
     }
 
     override fun onBindViewHolder(holder: GalleryViewHolder, position: Int) {
         if (position == itemCount - 1) {
+            with(holder.itemView) {
+                when (footerViewStatus) {
+                    DATA_STATUS_CAN_LOAD_MORE -> {
+                        pb_loading.visibility = View.VISIBLE
+                        tv_loading.text = context.getString(R.string.tag_loading)
+                        isClickable = false
+                    }
+                    DATA_STATUS_NETWORK_ERROR -> {
+                        pb_loading.visibility = View.GONE
+                        tv_loading.text = context.getString(R.string.tag_net_error)
+                        isClickable = false
+                    }
+                    DATA_STATUS_NO_MORE -> {
+                        pb_loading.visibility = View.GONE
+                        tv_loading.text = context.getString(R.string.tag_load_complete)
+                        isClickable = true
+                    }
+                }
+            }
+
             return
         }
         val hit = getItem(position)
