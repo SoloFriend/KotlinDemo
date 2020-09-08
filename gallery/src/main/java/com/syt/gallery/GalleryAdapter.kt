@@ -108,7 +108,7 @@ class GalleryAdapter : ListAdapter<Hit, GalleryViewHolder>(DIFF_CALLBACK) {
 
     object DIFF_CALLBACK : DiffUtil.ItemCallback<Hit>() {
         override fun areItemsTheSame(oldItem: Hit, newItem: Hit): Boolean {
-            return oldItem === newItem
+            return oldItem.id == newItem.id
         }
 
         override fun areContentsTheSame(oldItem: Hit, newItem: Hit): Boolean {

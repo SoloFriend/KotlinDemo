@@ -18,7 +18,7 @@ import kotlinx.android.synthetic.main.item_pager_photo.view.*
 class PagerPhotoListAdapter : ListAdapter<Hit, PagerPhotoViewHolder>(DIFF_CALLBACK) {
     object DIFF_CALLBACK : DiffUtil.ItemCallback<Hit>() {
         override fun areItemsTheSame(oldItem: Hit, newItem: Hit): Boolean {
-            return oldItem === newItem
+            return oldItem.id == newItem.id
         }
 
         override fun areContentsTheSame(oldItem: Hit, newItem: Hit): Boolean {
