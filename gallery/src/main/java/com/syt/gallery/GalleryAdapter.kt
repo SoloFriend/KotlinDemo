@@ -9,6 +9,7 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -18,25 +19,54 @@ import com.syt.gallery.bean.Hit
 import kotlinx.android.synthetic.main.item_gallery.view.*
 
 class GalleryAdapter : ListAdapter<Hit, GalleryViewHolder>(DIFF_CALLBACK) {
+
+    companion object {
+        const val NORMAL_VIEW_TYPE = 0  // 普通布局
+        const val FOOTER_VIEW_TYPE = 1  // 加载更多布局
+    }
+
+    override fun getItemCount(): Int {
+        return super.getItemCount() + 1 // 增加FooterView坑位
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return if (position == itemCount - 1) FOOTER_VIEW_TYPE else NORMAL_VIEW_TYPE
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GalleryViewHolder {
-        val holder = GalleryViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.item_gallery, parent, false)
-        )
-        holder.itemView.setOnClickListener {
-            Bundle().apply {
+        val holder: GalleryViewHolder
+        if (viewType == NORMAL_VIEW_TYPE) {
+            holder = GalleryViewHolder(
+                LayoutInflater.from(parent.context).inflate(R.layout.item_gallery, parent, false)
+            )
+            holder.itemView.setOnClickListener {
+                Bundle().apply {
 //                putParcelable("PHOTO", getItem(holder.adapterPosition))
 //                holder.itemView.findNavController()
 //                    .navigate(R.id.action_galleryFragment_to_photoFragment, this)
-                putParcelableArrayList(PHOTO_LIST, ArrayList(currentList))
-                putInt(PHOTO_POSITION, holder.adapterPosition)
-                holder.itemView.findNavController()
-                    .navigate(R.id.action_galleryFragment_to_pagerPhotoFragment, this)
+                    putParcelableArrayList(PHOTO_LIST, ArrayList(currentList))
+                    putInt(PHOTO_POSITION, holder.adapterPosition)
+                    holder.itemView.findNavController()
+                        .navigate(R.id.action_galleryFragment_to_pagerPhotoFragment, this)
+                }
             }
+        } else {
+            holder = GalleryViewHolder(
+                LayoutInflater.from(parent.context).inflate(R.layout.footer_gallery, parent, false)
+                    .also {
+                        (it.layoutParams as StaggeredGridLayoutManager.LayoutParams).isFullSpan =
+                            true
+                    }
+            )
         }
+
         return holder
     }
 
     override fun onBindViewHolder(holder: GalleryViewHolder, position: Int) {
+        if (position == itemCount - 1) {
+            return
+        }
         val hit = getItem(position)
         with(holder.itemView) {
             tv_user.text = hit.user
