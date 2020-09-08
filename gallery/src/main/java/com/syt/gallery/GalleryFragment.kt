@@ -29,16 +29,17 @@ class GalleryFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         setHasOptionsMenu(true)
+        galleryViewModel = ViewModelProvider(
+            this,
+            ViewModelProvider.AndroidViewModelFactory(requireActivity().application)
+        ).get(GalleryViewModel::class.java)
+
         val galleryAdapter = GalleryAdapter(galleryViewModel)
         rv_gallery.apply {
             adapter = galleryAdapter
             layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         }
 
-        galleryViewModel = ViewModelProvider(
-            this,
-            ViewModelProvider.AndroidViewModelFactory(requireActivity().application)
-        ).get(GalleryViewModel::class.java)
 
         galleryViewModel.photoListLive.observe(viewLifecycleOwner, Observer {
             if (galleryViewModel.needToScrollTop) {
@@ -53,7 +54,7 @@ class GalleryFragment : Fragment() {
 
         galleryViewModel.dataStatusLive.observe(viewLifecycleOwner, {
             galleryAdapter.footerViewStatus = it
-            galleryAdapter.notifyItemChanged(galleryAdapter.itemCount -1)
+            galleryAdapter.notifyItemChanged(galleryAdapter.itemCount - 1)
             if (it == DATA_STATUS_NETWORK_ERROR) srl_gallery.isRefreshing = false
         })
 
