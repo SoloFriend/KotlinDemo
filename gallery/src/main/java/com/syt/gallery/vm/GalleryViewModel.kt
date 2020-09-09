@@ -67,11 +67,11 @@ class GalleryViewModel(application: Application) : AndroidViewModel(application)
 
     fun fetchData() {
         if (isLoading) return
-        isLoading = true
         if (currentPage > totalPage) {
             _dataStatusLive.value = DATA_STATUS_NO_MORE
             return
         }
+        isLoading = true
         val stringRequest = StringRequest(
             Request.Method.GET,
             getUrl(),
