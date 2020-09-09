@@ -119,6 +119,13 @@ class PagerPhotoFragment : Fragment() {
                     }
                 }
             }
+            R.id.orientation -> {
+                vp_photo.orientation =
+                    if (vp_photo.orientation == ViewPager2.ORIENTATION_VERTICAL)
+                        ViewPager2.ORIENTATION_HORIZONTAL
+                    else
+                        ViewPager2.ORIENTATION_VERTICAL
+            }
         }
         return super.onOptionsItemSelected(item)
     }

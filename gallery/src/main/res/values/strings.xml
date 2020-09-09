@@ -7,4 +7,6 @@
     <string name="tag_loading">正在加载…</string>
     <string name="tag_load_complete">全部加载完毕</string>
     <string name="tag_net_error">网络故障，点击重试…</string>
+    <string name="download">保存到本地</string>
+    <string name="orientation">切换滚动方向</string>
 </resources>

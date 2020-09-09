@@ -5,5 +5,9 @@
     <item
         android:id="@+id/download"
         android:icon="@drawable/ic_download"
-        android:title="Download" />
+        android:title="@string/download" />
+    <item
+        android:id="@+id/orientation"
+        android:icon="@drawable/ic_orientation"
+        android:title="@string/orientation" />
 </menu>
