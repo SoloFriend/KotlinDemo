@@ -13,11 +13,12 @@ import com.syt.gallery.vm.GalleryViewModel
 import kotlinx.android.synthetic.main.fragment_gallery.*
 
 /**
- * A simple [Fragment] subclass.
+ * 首页图片列表.
  */
 class GalleryFragment : Fragment() {
 
     private lateinit var galleryViewModel: GalleryViewModel
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

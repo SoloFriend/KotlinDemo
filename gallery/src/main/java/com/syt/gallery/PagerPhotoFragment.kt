@@ -26,14 +26,15 @@ import kotlinx.coroutines.withContext
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-const val PHOTO_LIST = "PHOTO_LIST"
-const val PHOTO_POSITION = "PHOTO_POSITION"
-const val REQUEST_WRITE_EXTERNAL_STORAGE = 1
+const val PHOTO_LIST = "PHOTO_LIST" // 图片列表
+const val PHOTO_POSITION = "PHOTO_POSITION" // 当前位置
+const val REQUEST_WRITE_EXTERNAL_STORAGE = 1    // 存储图片权限响应码
 
 /**
  * A simple [Fragment] subclass.
  * Use the [PagerPhotoFragment.newInstance] factory method to
  * create an instance of this fragment.
+ * 分页图片详情查看页
  */
 class PagerPhotoFragment : Fragment() {
     // TODO: Rename and change types of parameters

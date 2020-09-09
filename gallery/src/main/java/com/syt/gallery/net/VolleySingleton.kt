@@ -5,6 +5,9 @@ import com.android.volley.RequestQueue
 import com.android.volley.toolbox.Volley
 import com.syt.gallery.SingletonHolder
 
+/**
+ * 单例Volley
+ */
 class VolleySingleton private constructor(context: Context) {
 //    companion object {
 //        private var INSTANCE: VolleySingleton? = null

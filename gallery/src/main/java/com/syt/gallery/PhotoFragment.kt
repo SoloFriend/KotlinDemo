@@ -19,6 +19,7 @@ import kotlinx.android.synthetic.main.item_gallery.view.*
 
 /**
  * A simple [Fragment] subclass.
+ * 单张图片详情页
  */
 class PhotoFragment : Fragment() {
 

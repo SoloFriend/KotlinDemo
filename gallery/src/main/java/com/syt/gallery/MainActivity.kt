@@ -5,6 +5,9 @@ import android.os.Bundle
 import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI
 
+/**
+ * 应用入口Activity
+ */
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.findNavController
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -23,8 +22,11 @@ import com.syt.gallery.vm.GalleryViewModel
 import kotlinx.android.synthetic.main.footer_gallery.view.*
 import kotlinx.android.synthetic.main.item_gallery.view.*
 
-class GalleryAdapter(val galleryViewModel: GalleryViewModel) :
-    ListAdapter<Hit, GalleryViewHolder>(DIFF_CALLBACK) {
+/**
+ * 首页图片列表适配器
+ */
+class GalleryAdapter(private val galleryViewModel: GalleryViewModel) :
+    ListAdapter<Hit, GalleryViewHolder>(HitDiffCallback) {
 
     var footerViewStatus = DATA_STATUS_CAN_LOAD_MORE
 
@@ -33,9 +35,8 @@ class GalleryAdapter(val galleryViewModel: GalleryViewModel) :
         const val FOOTER_VIEW_TYPE = 1  // 加载更多布局
     }
 
-    override fun getItemCount(): Int {
-        return super.getItemCount() + 1 // 增加FooterView坑位
-    }
+    override fun getItemCount() = super.getItemCount() + 1 // 增加FooterView坑位
+
 
     override fun getItemViewType(position: Int): Int {
         return if (position == itemCount - 1) FOOTER_VIEW_TYPE else NORMAL_VIEW_TYPE
@@ -43,22 +44,24 @@ class GalleryAdapter(val galleryViewModel: GalleryViewModel) :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GalleryViewHolder {
         val holder: GalleryViewHolder
-        if (viewType == NORMAL_VIEW_TYPE) {
+        if (viewType == NORMAL_VIEW_TYPE) { // 图片item
             holder = GalleryViewHolder(
                 LayoutInflater.from(parent.context).inflate(R.layout.item_gallery, parent, false)
             )
             holder.itemView.setOnClickListener {
                 Bundle().apply {
+                    // 跳转至单张图片查看页
 //                putParcelable("PHOTO", getItem(holder.adapterPosition))
 //                holder.itemView.findNavController()
 //                    .navigate(R.id.action_galleryFragment_to_photoFragment, this)
+                    // 跳转至多张图片查看页
                     putParcelableArrayList(PHOTO_LIST, ArrayList(currentList))
                     putInt(PHOTO_POSITION, holder.adapterPosition)
                     holder.itemView.findNavController()
                         .navigate(R.id.action_galleryFragment_to_pagerPhotoFragment, this)
                 }
             }
-        } else {
+        } else {    // footer item
             holder = GalleryViewHolder(
                 LayoutInflater.from(parent.context).inflate(R.layout.footer_gallery, parent, false)
                     .also {
@@ -76,27 +79,26 @@ class GalleryAdapter(val galleryViewModel: GalleryViewModel) :
     }
 
     override fun onBindViewHolder(holder: GalleryViewHolder, position: Int) {
-        if (position == itemCount - 1) {
+        if (position == itemCount - 1) {    // footer item
             with(holder.itemView) {
                 when (footerViewStatus) {
-                    DATA_STATUS_CAN_LOAD_MORE -> {
+                    DATA_STATUS_CAN_LOAD_MORE -> {  // 可以加载更多
                         pb_loading.visibility = View.VISIBLE
                         tv_loading.text = context.getString(R.string.tag_loading)
                         isClickable = false
                     }
-                    DATA_STATUS_NETWORK_ERROR -> {
+                    DATA_STATUS_NETWORK_ERROR -> {  // 网络错误
                         pb_loading.visibility = View.GONE
                         tv_loading.text = context.getString(R.string.tag_net_error)
                         isClickable = false
                     }
-                    DATA_STATUS_NO_MORE -> {
+                    DATA_STATUS_NO_MORE -> {    // 没有更多数据
                         pb_loading.visibility = View.GONE
                         tv_loading.text = context.getString(R.string.tag_load_complete)
                         isClickable = true
                     }
                 }
             }
-
             return
         }
         val hit = getItem(position)
@@ -136,16 +138,6 @@ class GalleryAdapter(val galleryViewModel: GalleryViewModel) :
                     return false.also { holder.itemView.sl_item_def?.stopShimmerAnimation() }
                 }
             }).into(holder.itemView.iv_photo)
-    }
-
-    object DIFF_CALLBACK : DiffUtil.ItemCallback<Hit>() {
-        override fun areItemsTheSame(oldItem: Hit, newItem: Hit): Boolean {
-            return oldItem.id == newItem.id
-        }
-
-        override fun areContentsTheSame(oldItem: Hit, newItem: Hit): Boolean {
-            return oldItem == newItem
-        }
     }
 }
 
