@@ -76,6 +76,7 @@ class GalleryFragment : Fragment() {
             }
         })
 
+        fab_top.setOnClickListener { rv_gallery.scrollToPosition(0) }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
