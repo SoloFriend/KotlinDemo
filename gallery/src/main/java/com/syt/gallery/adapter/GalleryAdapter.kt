@@ -1,4 +1,4 @@
-package com.syt.gallery
+package com.syt.gallery.adapter
 
 import android.graphics.drawable.Drawable
 import android.os.Bundle
@@ -7,14 +7,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.ListAdapter
-import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
+import com.syt.gallery.HitDiffCallback
+import com.syt.gallery.R
 import com.syt.gallery.bean.Hit
+import com.syt.gallery.fragment.PHOTO_LIST
+import com.syt.gallery.fragment.PHOTO_POSITION
 import com.syt.gallery.vm.DATA_STATUS_CAN_LOAD_MORE
 import com.syt.gallery.vm.DATA_STATUS_NETWORK_ERROR
 import com.syt.gallery.vm.DATA_STATUS_NO_MORE
@@ -25,6 +28,7 @@ import kotlinx.android.synthetic.main.item_gallery.view.*
 /**
  * 首页图片列表适配器
  */
+@Deprecated("Please use GalleryAdapterV2 instead.")
 class GalleryAdapter(private val galleryViewModel: GalleryViewModel) :
     ListAdapter<Hit, GalleryViewHolder>(HitDiffCallback) {
 
@@ -140,5 +144,3 @@ class GalleryAdapter(private val galleryViewModel: GalleryViewModel) :
             }).into(holder.itemView.iv_photo)
     }
 }
-
-class GalleryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)

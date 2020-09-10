@@ -1,39 +1,45 @@
-package com.syt.gallery
+package com.syt.gallery.fragment
+
 
 import android.graphics.drawable.Drawable
+import android.os.Bundle
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.ListAdapter
-import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
+import com.syt.gallery.R
 import com.syt.gallery.bean.Hit
-import kotlinx.android.synthetic.main.item_pager_photo.view.*
+import kotlinx.android.synthetic.main.fragment_photo.*
 
 /**
- * 分页查看图片详情页ViewPager适配器
+ * A simple [Fragment] subclass.
+ * 单张图片详情页
  */
-class PagerPhotoListAdapter : ListAdapter<Hit, PagerPhotoViewHolder>(HitDiffCallback) {
+class PhotoFragment : Fragment() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PagerPhotoViewHolder {
-        LayoutInflater.from(parent.context).inflate(R.layout.item_pager_photo, parent, false)
-            .apply {
-                return PagerPhotoViewHolder(this)
-            }
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_photo, container, false)
     }
 
-    override fun onBindViewHolder(holder: PagerPhotoViewHolder, position: Int) {
-        holder.itemView.sl_photo_def.apply {
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+
+        sl_photo_def.apply {
             setShimmerColor(0x55FFFFFF)
             setShimmerAngle(45)
             startShimmerAnimation()
         }
-        Glide.with(holder.itemView)
-            .load(getItem(position)?.largeImageURL)
+        Glide.with(requireContext())
+            .load(arguments?.getParcelable<Hit>("PHOTO")?.largeImageURL)
             .placeholder(R.drawable.photo_place_holder)
             .listener(object : RequestListener<Drawable> {
                 override fun onLoadFailed(
@@ -52,10 +58,9 @@ class PagerPhotoListAdapter : ListAdapter<Hit, PagerPhotoViewHolder>(HitDiffCall
                     dataSource: DataSource?,
                     isFirstResource: Boolean
                 ): Boolean {
-                    return false.also { holder.itemView.sl_photo_def?.stopShimmerAnimation() }
+                    return false.also { sl_photo_def?.stopShimmerAnimation() }
                 }
-            }).into(holder.itemView.iv_photo_big)
+            }).into(iv_photo_big)
     }
-}
 
-class PagerPhotoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+}

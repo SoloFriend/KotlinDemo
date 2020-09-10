@@ -19,7 +19,9 @@ const val DATA_STATUS_NO_MORE = 2   // 没有更多数据
 
 /**
  * 首页图片列表VM
+ * 已用 GalleryViewModelV2 替换
  */
+@Deprecated("Please use GalleryViewModelV2 instead.")
 class GalleryViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _dataStatusLive = MutableLiveData<Int>()

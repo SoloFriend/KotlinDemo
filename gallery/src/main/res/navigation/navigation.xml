@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/galleryFragment"
-        android:name="com.syt.gallery.GalleryFragment"
+        android:name="com.syt.gallery.fragment.GalleryFragment"
         android:label="gallery"
         tools:layout="@layout/fragment_gallery">
         <action
@@ -19,12 +19,12 @@
     </fragment>
     <fragment
         android:id="@+id/photoFragment"
-        android:name="com.syt.gallery.PhotoFragment"
+        android:name="com.syt.gallery.fragment.PhotoFragment"
         android:label="photo"
         tools:layout="@layout/fragment_photo" />
     <fragment
         android:id="@+id/pagerPhotoFragment"
-        android:name="com.syt.gallery.PagerPhotoFragment"
+        android:name="com.syt.gallery.fragment.PagerPhotoFragment"
         android:label="PagerPhoto"
         tools:layout="@layout/fragment_pager_photo" />
 </navigation>

@@ -1,4 +1,4 @@
-package com.syt.gallery
+package com.syt.gallery.fragment
 
 import android.Manifest
 import android.content.ContentValues
@@ -16,6 +16,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
+import com.syt.gallery.R
+import com.syt.gallery.adapter.PagerPhotoListAdapter
+import com.syt.gallery.adapter.PagerPhotoViewHolder
 import com.syt.gallery.bean.Hit
 import kotlinx.android.synthetic.main.fragment_pager_photo.*
 import kotlinx.android.synthetic.main.item_pager_photo.view.*

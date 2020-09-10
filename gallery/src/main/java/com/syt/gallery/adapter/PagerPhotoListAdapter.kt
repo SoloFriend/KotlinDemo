@@ -1,46 +1,41 @@
-package com.syt.gallery
-
+package com.syt.gallery.adapter
 
 import android.graphics.drawable.Drawable
-import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
+import com.syt.gallery.HitDiffCallback
+import com.syt.gallery.R
 import com.syt.gallery.bean.Hit
-import kotlinx.android.synthetic.main.fragment_photo.*
-import kotlinx.android.synthetic.main.item_gallery.*
-import kotlinx.android.synthetic.main.item_gallery.view.*
+import kotlinx.android.synthetic.main.item_pager_photo.view.*
 
 /**
- * A simple [Fragment] subclass.
- * 单张图片详情页
+ * 分页查看图片详情页ViewPager适配器
  */
-class PhotoFragment : Fragment() {
+class PagerPhotoListAdapter : ListAdapter<Hit, PagerPhotoViewHolder>(HitDiffCallback) {
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_photo, container, false)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PagerPhotoViewHolder {
+        LayoutInflater.from(parent.context).inflate(R.layout.item_pager_photo, parent, false)
+            .apply {
+                return PagerPhotoViewHolder(this)
+            }
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-        sl_photo_def.apply {
+    override fun onBindViewHolder(holder: PagerPhotoViewHolder, position: Int) {
+        holder.itemView.sl_photo_def.apply {
             setShimmerColor(0x55FFFFFF)
             setShimmerAngle(45)
             startShimmerAnimation()
         }
-        Glide.with(requireContext())
-            .load(arguments?.getParcelable<Hit>("PHOTO")?.largeImageURL)
+        Glide.with(holder.itemView)
+            .load(getItem(position)?.largeImageURL)
             .placeholder(R.drawable.photo_place_holder)
             .listener(object : RequestListener<Drawable> {
                 override fun onLoadFailed(
@@ -59,9 +54,8 @@ class PhotoFragment : Fragment() {
                     dataSource: DataSource?,
                     isFirstResource: Boolean
                 ): Boolean {
-                    return false.also { sl_photo_def?.stopShimmerAnimation() }
+                    return false.also { holder.itemView.sl_photo_def?.stopShimmerAnimation() }
                 }
-            }).into(iv_photo_big)
+            }).into(holder.itemView.iv_photo_big)
     }
-
 }
