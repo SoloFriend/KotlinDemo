@@ -9,4 +9,6 @@
     <string name="tag_net_error">网络故障，点击重试…</string>
     <string name="download">保存到本地</string>
     <string name="orientation">切换滚动方向</string>
+    <string name="refresh">刷新</string>
+    <string name="retry">再试一次</string>
 </resources>
