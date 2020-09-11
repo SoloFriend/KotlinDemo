@@ -36,7 +36,13 @@ class PixabayDataSource(private val context: Context) : PageKeyedDataSource<Int,
         "music",
         "girl",
         "sexy",
-        "death"
+        "death",
+        "love",
+        "anime",
+        "cartoon",
+        "hero",
+        "lovely",
+        "game"
     ).random()
     private val userKey = "18114850-972781ef8be2db7220e906302"
     private val pageSize = 30
