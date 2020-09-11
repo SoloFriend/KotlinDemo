@@ -13,10 +13,10 @@ import com.syt.gallery.ds.PixabayDataSourceFactory
  */
 class GalleryViewModelV2(application: Application) : AndroidViewModel(application) {
 
-    val factory = PixabayDataSourceFactory(application)
+    private val factory = PixabayDataSourceFactory(application)
     val pagedListLiveData = factory.toLiveData(1)
     val networkStatus =
-        Transformations.switchMap(factory.dataSourceLiveData) { it.networkStatus }
+        Transformations.switchMap(factory.dataSourceLiveData) { it.networkStatus }!!
 
     /**
      * 重新发起请求

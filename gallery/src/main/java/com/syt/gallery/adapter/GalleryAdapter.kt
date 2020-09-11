@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
@@ -144,3 +145,5 @@ class GalleryAdapter(private val galleryViewModel: GalleryViewModel) :
             }).into(holder.itemView.iv_photo)
     }
 }
+
+class GalleryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)

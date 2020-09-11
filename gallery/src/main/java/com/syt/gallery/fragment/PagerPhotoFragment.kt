@@ -13,6 +13,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.get
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
@@ -20,6 +21,7 @@ import com.syt.gallery.R
 import com.syt.gallery.adapter.PagerPhotoListAdapter
 import com.syt.gallery.adapter.PagerPhotoViewHolder
 import com.syt.gallery.bean.Hit
+import com.syt.gallery.vm.GalleryViewModelV2
 import kotlinx.android.synthetic.main.fragment_pager_photo.*
 import kotlinx.android.synthetic.main.item_pager_photo.view.*
 import kotlinx.coroutines.Dispatchers
@@ -40,6 +42,9 @@ const val REQUEST_WRITE_EXTERNAL_STORAGE = 1    // 存储图片权限响应码
  * 分页图片详情查看页
  */
 class PagerPhotoFragment : Fragment() {
+
+    private val galleryViewModel by activityViewModels<GalleryViewModelV2>()
+
     // TODO: Rename and change types of parameters
     private var list: ArrayList<Hit>? = null
     private var position: Int? = null
@@ -83,19 +88,23 @@ class PagerPhotoFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         setHasOptionsMenu(true)
-        PagerPhotoListAdapter().apply {
-            vp_photo.adapter = this
-            submitList(list)
-        }
+        val adapter = PagerPhotoListAdapter()
+        vp_photo.adapter = adapter
+        galleryViewModel.pagedListLiveData.observe(viewLifecycleOwner, {
+            adapter.submitList(it)
+            vp_photo.setCurrentItem(position ?: 0, false)
+        })
 
         vp_photo.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                tv_position.text = getString(R.string.photo_tag, position + 1, list?.size)
+                tv_position.text = getString(
+                    R.string.photo_tag,
+                    position + 1,
+                    galleryViewModel.pagedListLiveData.value?.size
+                )
             }
         })
-
-        vp_photo.setCurrentItem(position ?: 0, false)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

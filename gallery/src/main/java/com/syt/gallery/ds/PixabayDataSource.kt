@@ -12,11 +12,16 @@ import com.syt.gallery.bean.Hit
 import com.syt.gallery.bean.Pixabay
 import com.syt.gallery.net.VolleySingleton
 
+/**
+ * 网络数据加载状态
+ */
 enum class NetworkStatus {
-    LOADING,
-    SUCCESS,
-    FAILED,
-    COMPLETED
+    LOADING_INITIAL,    // 首次加载
+    SUCCESS_INITIAL,    // 首次加载成功
+    LOADING,            // 加载中
+    SUCCESS,            // 加载成功
+    FAILED,             // 加载失败
+    COMPLETED           // 全部加载完成
 }
 
 /**
@@ -29,7 +34,7 @@ class PixabayDataSource(private val context: Context) : PageKeyedDataSource<Int,
     private val _networkStatus = MutableLiveData<NetworkStatus>()
     val networkStatus: LiveData<NetworkStatus> = _networkStatus
 
-    var retry: (() -> Any)? = null
+    var retry: (() -> Any)? = null  // 保存报错的函数，以便再次调用
 
     /**
      * 随机关键字
@@ -67,13 +72,13 @@ class PixabayDataSource(private val context: Context) : PageKeyedDataSource<Int,
         params: LoadInitialParams<Int>,
         callback: LoadInitialCallback<Int, Hit>
     ) {
-        _networkStatus.postValue(NetworkStatus.LOADING)
+        retry = null
+        _networkStatus.postValue(NetworkStatus.LOADING_INITIAL)
         StringRequest(
             Request.Method.GET,
             "$url&page=1",
             {
-                retry = null
-                _networkStatus.postValue(NetworkStatus.SUCCESS)
+                _networkStatus.postValue(NetworkStatus.SUCCESS_INITIAL)
                 val hits = Gson().fromJson(it, Pixabay::class.java).hits.toList()
                 callback.onResult(hits, null, 2)
             },
@@ -90,12 +95,12 @@ class PixabayDataSource(private val context: Context) : PageKeyedDataSource<Int,
     }
 
     override fun loadAfter(params: LoadParams<Int>, callback: LoadCallback<Int, Hit>) {
+        retry = null
         _networkStatus.postValue(NetworkStatus.LOADING)
         StringRequest(
             Request.Method.GET,
             "$url&page=${params.key}",
             {
-                retry = null
                 _networkStatus.postValue(NetworkStatus.SUCCESS)
                 val hits = Gson().fromJson(it, Pixabay::class.java).hits.toList()
                 callback.onResult(hits, params.key + 1)

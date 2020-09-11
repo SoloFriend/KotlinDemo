@@ -59,3 +59,5 @@ class PagerPhotoListAdapter : ListAdapter<Hit, PagerPhotoViewHolder>(HitDiffCall
             }).into(holder.itemView.iv_photo_big)
     }
 }
+
+class PagerPhotoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)

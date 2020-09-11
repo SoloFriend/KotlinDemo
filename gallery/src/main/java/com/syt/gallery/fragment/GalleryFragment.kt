@@ -3,10 +3,8 @@ package com.syt.gallery.fragment
 
 import android.os.Bundle
 import android.view.*
-import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.syt.gallery.R
 import com.syt.gallery.adapter.GalleryAdapterV2
@@ -19,7 +17,7 @@ import kotlinx.android.synthetic.main.fragment_gallery.*
  */
 class GalleryFragment : Fragment() {
 
-    private val galleryViewModel by viewModels<GalleryViewModelV2>()
+    private val galleryViewModel by activityViewModels<GalleryViewModelV2>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,7 +31,7 @@ class GalleryFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         setHasOptionsMenu(true)
 
-        val galleryAdapter = GalleryAdapterV2()
+        val galleryAdapter = GalleryAdapterV2(galleryViewModel)
         rv_gallery.apply {
             adapter = galleryAdapter
             layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
@@ -51,25 +49,9 @@ class GalleryFragment : Fragment() {
 
 
         galleryViewModel.networkStatus.observe(viewLifecycleOwner, {
-            when (it) {
-                NetworkStatus.LOADING -> {
-                    srl_gallery.isRefreshing = true
-                }
-                NetworkStatus.SUCCESS -> {
-                    srl_gallery.isRefreshing = false
-                }
-                NetworkStatus.FAILED -> {
-                    Toast.makeText(requireContext(), "网络出现错误", Toast.LENGTH_SHORT).show()
-                    srl_gallery.isRefreshing = false
-                }
-                NetworkStatus.COMPLETED -> {
-                    Toast.makeText(requireContext(), "没有更多数据", Toast.LENGTH_SHORT).show()
-                    srl_gallery.isRefreshing = false
-                }
-                else -> {
-                    throw IllegalArgumentException("unKnow network status: $it")
-                }
-            }
+            srl_gallery.isRefreshing = it == NetworkStatus.LOADING_INITIAL
+            galleryAdapter.updateNetworkStatus(it)
+
         })
     }
 
@@ -82,9 +64,6 @@ class GalleryFragment : Fragment() {
         when (item.itemId) {
             R.id.refresh -> {
                 galleryViewModel.resetQuery()
-            }
-            R.id.retry -> {
-                galleryViewModel.retry()
             }
         }
         return super.onOptionsItemSelected(item)
