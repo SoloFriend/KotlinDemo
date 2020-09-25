@@ -1,5 +1,8 @@
 package com.syt.gallery
 
+/**
+ * 构造方法中单个参数的单例容器类
+ */
 open class SingletonHolder<out T : Any, in A>(creator: (A) -> T) {
 
     private var creator: ((A) -> T)? = creator

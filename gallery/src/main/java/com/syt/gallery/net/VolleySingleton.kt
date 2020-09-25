@@ -9,17 +9,10 @@ import com.syt.gallery.SingletonHolder
  * 单例Volley
  */
 class VolleySingleton private constructor(context: Context) {
-//    companion object {
-//        private var INSTANCE: VolleySingleton? = null
-//        fun getInstance(context: Context) =
-//            INSTANCE ?: synchronized(this) {
-//                VolleySingleton(context).also { INSTANCE = it }
-//            }
-//    }
+
+    companion object : SingletonHolder<VolleySingleton, Context>(::VolleySingleton)
 
     val requestQueue: RequestQueue by lazy {
         Volley.newRequestQueue(context.applicationContext)
     }
-
-    companion object : SingletonHolder<VolleySingleton,Context>(::VolleySingleton)
 }
