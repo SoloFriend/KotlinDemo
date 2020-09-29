@@ -1,3 +1,4 @@
+include ':drawer'
 include ':workmanager'
 include ':viewmodel'
 include ':app', ':gallery', ':viewpager'
